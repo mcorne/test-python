@@ -6,7 +6,6 @@ print(msg)
 msg = "Hello again"
 print(msg)
 
-
 # %%
 import matplotlib.pyplot as plt
 import numpy as np

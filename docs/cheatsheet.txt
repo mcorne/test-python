@@ -1,0 +1,8 @@
+conda install notebook
+conda install matplotlib
+conda install numpy
+conda install pandas
+
+conda config --set auto_activate_base false
+conda activate
+conda deactivate

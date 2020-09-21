@@ -6,3 +6,5 @@ conda install pandas
 conda config --set auto_activate_base false
 conda activate
 conda deactivate
+
+ctrl+, Data Science: Debug Just My Code

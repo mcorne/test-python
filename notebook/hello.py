@@ -1,4 +1,5 @@
 # %%
+# https://code.visualstudio.com/docs/python/jupyter-support-py
 msg = "Hello World"
 print(msg)
 

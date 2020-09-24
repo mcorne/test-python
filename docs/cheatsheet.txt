@@ -1,15 +1,18 @@
+# Install miniconda
+# https://docs.conda.io/en/latest/miniconda.html
+# Answer yes to all
+Miniconda3-latest-Linux-x86_64.sh
+conda config --set auto_activate_base false
+
+# Install datascience packages
 conda activate
 conda install notebook
-conda install ipykernel
-conda install matplotlib
-conda install numpy
-conda install pandas
+conda install matplotlib numpy pandas
 conda install seaborn scikit-learn keras tensorflow
 
-conda config --set auto_activate_base false
+# Misc conda
 conda activate
 conda deactivate
 
-ctrl+, Data Science: Debug Just My Code
-
-Anaconda Extension Pack
+# Vscode
+# Ctrl+, Data Science: Debug Just My Code

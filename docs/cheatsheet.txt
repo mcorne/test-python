@@ -9,6 +9,7 @@ conda activate
 conda install notebook
 conda install matplotlib numpy pandas
 conda install seaborn scikit-learn keras tensorflow
+conda install openpyxl xlrd
 
 # Misc conda
 conda activate

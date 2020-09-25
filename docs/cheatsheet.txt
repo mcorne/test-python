@@ -17,3 +17,5 @@ conda deactivate
 
 # Vscode
 # Ctrl+, Data Science: Debug Just My Code
+# Add Anaconda Extension Pack
+# Add Pylance and change python.languageServer to Pylance to autocomplete Pandas stuff

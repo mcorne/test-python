@@ -6,14 +6,27 @@ conda config --set auto_activate_base false
 
 # Install datascience packages
 conda activate
+# for vscode exercices
 conda install notebook
 conda install matplotlib numpy pandas
 conda install seaborn scikit-learn keras tensorflow
 conda install openpyxl xlrd
+# for brian2
+conda install -c conda-forge brian2
+conda install -c brian-team brian2tools # up to 3.6 only
+conda install pytest
+# for Neuronal Dynamics Exercises
+conda install numpy scipy jupyter matplotlib mpmath setuptools setuptools_scm mock nose
+pip --version # to verify following pip install is run in conda env
+pip install neurodynex3
 
 # Misc conda
 conda activate
 conda deactivate
+
+# Misc jupyter
+which jupyter # should return /home/michel/miniconda3/bin/jupyter
+jupyter notebook # start jupyter in browser in current directory
 
 # Vscode
 # Ctrl+, Data Science: Debug Just My Code

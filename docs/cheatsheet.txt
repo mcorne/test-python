@@ -19,6 +19,7 @@ conda install pytest
 conda install numpy scipy jupyter matplotlib mpmath setuptools setuptools_scm mock nose
 pip --version # to verify following pip install is run in conda env
 pip install neurodynex3
+conda install Sphinx
 
 # Misc conda
 conda activate

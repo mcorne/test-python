@@ -6,6 +6,7 @@ conda config --set auto_activate_base false
 
 # Install datascience packages
 conda activate
+conda install pylint black
 # for vscode exercices
 conda install notebook
 conda install matplotlib numpy pandas

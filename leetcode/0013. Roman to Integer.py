@@ -30,17 +30,17 @@ class Solution:
         return value
 
 # Tests
-s = Solution()
+solution = Solution()
 r = "III"
-print(s.romanToInt(r))
+print(solution.romanToInt(r))
 r = "IV"
-print(s.romanToInt(r))
+print(solution.romanToInt(r))
 r = "IX"
-print(s.romanToInt(r))
+print(solution.romanToInt(r))
 r = "LVIII"
-print(s.romanToInt(r))
+print(solution.romanToInt(r))
 r = "MCMXCIV"
-print(s.romanToInt(r))
+print(solution.romanToInt(r))
 
 # LeetCode Submission
 # Runtime: 60 ms, faster than 13.93% of Python3 online submissions for Roman to Integer.

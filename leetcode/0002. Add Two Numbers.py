@@ -47,24 +47,24 @@ class Solution:
 
 
 # Tests
-s = Solution()
+solution = Solution()
 
-l1 = s.list2nodes([2,4,3])
-l2 = s.list2nodes([5,6,4])
-res = s.addTwoNumbers(l1, l2)
-print(s.nodes2list(res))
+l1 = solution.list2nodes([2,4,3])
+l2 = solution.list2nodes([5,6,4])
+res = solution.addTwoNumbers(l1, l2)
+print(solution.nodes2list(res))
 
-l1 = s.list2nodes([0])
-l2 = s.list2nodes([0])
-res = s.addTwoNumbers(l1, l2)
-print(s.nodes2list(res))
+l1 = solution.list2nodes([0])
+l2 = solution.list2nodes([0])
+res = solution.addTwoNumbers(l1, l2)
+print(solution.nodes2list(res))
 
-l1 = s.list2nodes([9,9,9,9,9,9,9])
-l2 = s.list2nodes([9,9,9,9])
-res = s.addTwoNumbers(l1, l2)
-print(s.nodes2list(res))
+l1 = solution.list2nodes([9,9,9,9,9,9,9])
+l2 = solution.list2nodes([9,9,9,9])
+res = solution.addTwoNumbers(l1, l2)
+print(solution.nodes2list(res))
 
 # LeetCode Submission
-# Runtime: 64 ms, faster than 91.46% of Python3 online submissions for Add Two Numbers.
-# Memory Usage: 14.2 MB, less than 100.00% of Python3 online submissions for Add Two Numbers.
+# Runtime: 64 ms, faster than 91.46% of Python3 online submissions for Add Two Numbersolution.
+# Memory Usage: 14.2 MB, less than 100.00% of Python3 online submissions for Add Two Numbersolution.
 # 1568 / 1568 test cases passed.

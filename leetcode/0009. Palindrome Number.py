@@ -9,19 +9,19 @@ class Solution:
         return left == reversed_right
 
 # Tests
-s = Solution()
+solution = Solution()
 x = 121
-print(s.isPalindrome(x))
+print(solution.isPalindrome(x))
 x = -121
-print(s.isPalindrome(x))
+print(solution.isPalindrome(x))
 x = 10
-print(s.isPalindrome(x))
+print(solution.isPalindrome(x))
 x = -101
-print(s.isPalindrome(x))
+print(solution.isPalindrome(x))
 x = 100
-print(s.isPalindrome(x))
+print(solution.isPalindrome(x))
 x = 1221
-print(s.isPalindrome(x))
+print(solution.isPalindrome(x))
 
 # LeetCode Submission
 # Runtime: 64 ms, faster than 54.65% of Python3 online submissions for Palindrome Number.

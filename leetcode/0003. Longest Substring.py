@@ -31,6 +31,6 @@ s = "dvdf"
 print(solution.lengthOfLongestSubstring(s))
 
 # LeetCode Submission
-# Runtime: 412 ms, faster than 16.29% of Python3 online submissions for Longest Substring Without Repeating Characters.
-# Memory Usage: 14.3 MB, less than 100.00% of Python3 online submissions for Longest Substring Without Repeating Characters.
+# Runtime: 412 ms, faster than 16.29% of Python3 online submissions for Longest Substring Without Repeating Charactersolution.
+# Memory Usage: 14.3 MB, less than 100.00% of Python3 online submissions for Longest Substring Without Repeating Charactersolution.
 # 987 / 987 test cases passed.

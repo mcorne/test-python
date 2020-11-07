@@ -15,17 +15,17 @@ class Solution:
         
 
 # Tests
-s = Solution()
+solution = Solution()
 x = 123
-print(s.reverse(x))
+print(solution.reverse(x))
 x = -123
-print(s.reverse(x))
+print(solution.reverse(x))
 x = 120
-print(s.reverse(x))
+print(solution.reverse(x))
 x = 0
-print(s.reverse(x))
+print(solution.reverse(x))
 x = 1534236469
-print(s.reverse(x))
+print(solution.reverse(x))
 
 # LeetCode Submission
 # Runtime: 28 ms, faster than 85.13% of Python3 online submissions for Reverse Integer.

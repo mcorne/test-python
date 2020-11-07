@@ -17,19 +17,19 @@ class Solution:
                 return True
 
 # Tests
-s = Solution()
+solution = Solution()
 arr = [85]
 pieces = [[85]]
-print(s.canFormArray(arr, pieces))
+print(solution.canFormArray(arr, pieces))
 arr = [15,88]
 pieces = [[88],[15]]
-print(s.canFormArray(arr, pieces))
+print(solution.canFormArray(arr, pieces))
 arr = [49,18,16]
 pieces = [[16,18,49]]
-print(s.canFormArray(arr, pieces))
+print(solution.canFormArray(arr, pieces))
 arr = [91,4,64,78]
 pieces = [[78],[4,64],[91]]
-print(s.canFormArray(arr, pieces))
+print(solution.canFormArray(arr, pieces))
 
 # LeetCode Submission
 # Runtime: 36 ms, faster than 95.41% of Python3 online submissions for Check Array Formation Through Concatenation.

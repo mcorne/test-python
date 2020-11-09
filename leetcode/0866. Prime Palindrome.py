@@ -1,3 +1,4 @@
+from math import sqrt
 class Solution:
     def primePalindrome(self, N: int) -> int:
         if N == 1 or N == 2:
@@ -9,12 +10,16 @@ class Solution:
         while True:
             s = str(N)
             if s == s[::-1]:
-                i = 2
-                while i < N:
+                i = 3
+                is_prime = True
+                # see https://en.wikipedia.org/wiki/Trial_division
+                sqrt_N = sqrt(N)
+                while i <= sqrt_N:
                     if N % i == 0:
+                        is_prime = False
                         break
-                    i += 1
-                if i == N:
+                    i += 2
+                if is_prime:
                     return N
             N += 2
 

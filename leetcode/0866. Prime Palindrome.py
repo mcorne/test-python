@@ -1,7 +1,4 @@
 class Solution:
-    primes = {2: True}
-    last_number = 2
-
     def isPrime(self, N: int) -> bool:
         i = 2
         while i < N:
@@ -38,7 +35,7 @@ N = 9989900
 print(solution.primePalindrome(N))
 
 # LeetCode Submission
-# Error: Time Limit Exceeded
+# Error: Time Limit Exceeded.
 # 51 / 60 test cases passed.
 # Last executed input: 9989900
 

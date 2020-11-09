@@ -1,19 +1,16 @@
 class Solution:
-    def isPrime(self, N: int) -> bool:
-        i = 2
-        while i < N:
-            if N % i == 0:
-                return False
-            i += 1
-        return True
-
     def primePalindrome(self, N: int) -> int:
         if N == 1 or N == 2:
             return 2
         while True:
             s = str(N)
             if s == s[::-1]:
-                if self.isPrime(N):
+                i = 2
+                while i < N:
+                    if N % i == 0:
+                        break
+                    i += 1
+                if i == N:
                     return N
             N += 1
 

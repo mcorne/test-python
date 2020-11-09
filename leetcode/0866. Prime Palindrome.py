@@ -2,6 +2,10 @@ class Solution:
     def primePalindrome(self, N: int) -> int:
         if N == 1 or N == 2:
             return 2
+        if N == 3:
+            return 3
+        if N % 2 == 0:
+            N += 1
         while True:
             s = str(N)
             if s == s[::-1]:
@@ -12,7 +16,7 @@ class Solution:
                     i += 1
                 if i == N:
                     return N
-            N += 1
+            N += 2
 
 # Tests
 solution = Solution()

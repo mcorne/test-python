@@ -47,45 +47,66 @@ class Solution:
         return spiral
 
 # Tests
-solution = Solution()
+def test(matrix, expected):
+    solution = Solution()
+    result = solution.spiralOrder(matrix)
+    status = "OK" if result == expected else "ERROR"
+    print(status, result)
+
 matrix = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9]
 ]
-print(solution.spiralOrder(matrix))
+expected = [1, 2, 3, 6, 9, 8, 7, 4, 5]
+test(matrix, expected)
+
 matrix = [
     [1, 2, 3, 4],
     [5, 6, 7, 8],
     [9,10,11,12]
 ]
-print(solution.spiralOrder(matrix))
+expected = [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
+test(matrix, expected)
+
 matrix = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
     [10, 11, 12]
 ]
-print(solution.spiralOrder(matrix))
+expected = [1, 2, 3, 6, 9, 12, 11, 10, 7, 4, 5, 8]
+test(matrix, expected)
+
 matrix = [
     [1, 2, 3, 4],
     [5, 6, 7, 8],
     [9, 10, 11, 12],
     [13, 14, 15, 16]
 ]
-print(solution.spiralOrder(matrix))
+expected = [1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10]
+test(matrix, expected)
+
 matrix = []
-print(solution.spiralOrder(matrix))
+expected = []
+test(matrix, expected)
+
 matrix = [[1]]
-print(solution.spiralOrder(matrix))
+expected = [1]
+test(matrix, expected)
+
 matrix = [[1, 2, 3]]
-print(solution.spiralOrder(matrix))
+expected = [1, 2, 3]
+test(matrix, expected)
+
 matrix = [
     [1],
     [2],
-    [2]
+    [3]
 ]
-print(solution.spiralOrder(matrix))
+expected = [1, 2, 3]
+test(matrix, expected)
+
 
 # LeetCode Submission
 # Runtime: 24 ms, faster than 94.04% of Python3 online submissions for Spiral Matrix.

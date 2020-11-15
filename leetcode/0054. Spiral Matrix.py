@@ -49,9 +49,9 @@ class Solution:
 # Tests
 def test(matrix, expected):
     solution = Solution()
-    result = solution.spiralOrder(matrix)
-    status = "OK" if result == expected else "ERROR"
-    print(status, result)
+    output = solution.spiralOrder(matrix)
+    status = "OK" if output == expected else "ERROR"
+    print(status, output)
 
 matrix = [
     [1, 2, 3],
@@ -106,7 +106,6 @@ matrix = [
 ]
 expected = [1, 2, 3]
 test(matrix, expected)
-
 
 # LeetCode Submission
 # Runtime: 24 ms, faster than 94.04% of Python3 online submissions for Spiral Matrix.

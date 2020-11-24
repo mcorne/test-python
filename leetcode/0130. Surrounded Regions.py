@@ -13,23 +13,31 @@ class Solution:
             for j in range(0, last_j+1):
                 if board[i][j] == "O" and (prev == "Z" or i == 0 or i == last_i or j == 0 or j == last_j):
                     prev, board[i][j] = board[i][j], "Z"
+                else:
+                    prev = board[i][j]
         # Zero cells from right to left
         prev = None
         for i in range(0, last_i+1):
             for j in range(last_j, -1, -1):
                 if board[i][j] == "O" and (prev == "Z" or i == 0 or i == last_i or j == 0 or j == last_j):
                     prev, board[i][j] = board[i][j], "Z"
+                else:
+                    prev = board[i][j]
         # Zero cells from top to bottom
         prev = None
         for j in range(0, last_j+1):
             for i in range(0, last_i+1):
                 if board[i][j] == "O" and (prev == "Z" or i == 0 or i == last_i or j == 0 or j == last_j):
                     prev, board[i][j] = board[i][j], "Z"
+                else:
+                    prev = board[i][j]
         # Zero cells from bottom to top
         for j in range(0, last_j+1):
             for i in range(last_i, -1, -1):
                 if board[i][j] == "O" and (prev == "Z" or i == 0 or i == last_i or j == 0 or j == last_j):
                     prev, board[i][j] = board[i][j], "Z"
+                else:
+                    prev = board[i][j]
         # Changes non zeroed cells ("O") to surrounded ("X") and zeroed cells ("Z") to not surrounded ("O")
         for i in range(0, last_i+1):
             for j in range(0, last_j+1):
@@ -67,20 +75,19 @@ X X X X
 X X X X
 X O X X
 """
-test(board, expected)
+# test(board, expected)
 
 board = """
-X X X X X O O X X X X X X O X X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
-X O O X X O O X X O O X X O O X
+X O X X X X X X
+X O O X X O O X
+X X X X X X X X
+X X X X X O O X
+X X X X X X X X
+X O O O X X O O
+O O X O X X X X
+X X X X X O O X
+X X X O X O O O
+X X X O X X X X
 """
 expected = """
 X X X X

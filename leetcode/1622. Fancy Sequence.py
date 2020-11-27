@@ -1,32 +1,30 @@
+from itertools import islice
 class Fancy:
     def __init__(self):
         self.operations = []
         self.values = []
 
-    def addAll(self, inc: int) -> None:
-        self.operations.append([inc, "+"])
-
     def append(self, value: int) -> None:
         self.values.append([value, len(self.operations)])
 
-    def getIndex(self, idx: int) -> int:
-        if idx >= len(self.values):
-            return -1
-        if self.values[idx][1] < len(self.operations):
-            self.updateValue(idx)
-        return self.values[idx][0] % (10**9 + 7)
+    def addAll(self, inc: int) -> None:
+        self.operations.append([inc, "+"])
 
     def multAll(self, m: int) -> None:
         self.operations.append([m, "*"])
 
-    def updateValue(self, value_idx: int)-> int:
+    def getIndex(self, value_idx: int) -> int:
+        if value_idx >= len(self.values):
+            return -1
         value, operation_idx = self.values[value_idx]
-        for operand, operator in self.operations[operation_idx:]:
-            if operator == "+":
-                value += operand
-            else:
-                value *= operand
-        self.values[value_idx] = [value, len(self.operations)]
+        if operation_idx < len(self.operations):
+            for operand, operator in islice(self.operations, operation_idx, None):
+                if operator == "+":
+                    value += operand
+                else:
+                    value *= operand
+            self.values[value_idx] = [value, len(self.operations)]
+        return value % (10**9 + 7)
 
     @classmethod
     def generateSequence(cls, methods: list, args: list) -> list:

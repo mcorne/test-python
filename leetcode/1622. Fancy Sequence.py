@@ -1,30 +1,35 @@
-from itertools import islice
+# https://leetcode.com/problems/fancy-sequence/
 class Fancy:
     def __init__(self):
-        self.operations = []
+        self.inc = 0
+        self.m = 1
+        self.modulus = 10**9 + 7
         self.values = []
 
     def append(self, value: int) -> None:
-        self.values.append([value, len(self.operations)])
+        self.values.append([value, self.m, self.inc])
 
     def addAll(self, inc: int) -> None:
-        self.operations.append([inc, "+"])
+        self.inc += inc
+        self.inc %= self.modulus
 
     def multAll(self, m: int) -> None:
-        self.operations.append([m, "*"])
+        self.m *= m
+        self.m %= self.modulus
+        self.inc *= m
+        self.inc %= self.modulus
 
-    def getIndex(self, value_idx: int) -> int:
-        if value_idx >= len(self.values):
+    def getIndex(self, idx: int) -> int:
+        if idx >= len(self.values):
             return -1
-        value, operation_idx = self.values[value_idx]
-        if operation_idx < len(self.operations):
-            for operand, operator in islice(self.operations, operation_idx, None):
-                if operator == "+":
-                    value += operand
-                else:
-                    value *= operand
-            self.values[value_idx] = [value, len(self.operations)]
-        return value % (10**9 + 7)
+        value, m, inc = self.values[idx]
+        # Modular inverse where the modulus is a prime: a**(-1) ≡ a**(m-2) (mod m)
+        # https://en.wikipedia.org/wiki/Modular_multiplicative_inverse#Using_Euler's_theorem
+        # m = self.m / m = self.m * m**(-1)
+        m = self.m * pow(m, self.modulus-2, self.modulus)
+        inc = self.inc - inc * m
+        value = value * m + inc
+        return int(value % self.modulus)
 
     @classmethod
     def generateSequence(cls, methods: list, args: list) -> list:
@@ -80,4 +85,21 @@ args = [[]] + [[2], [3], [7], [2], [0], [3], [10], [2], [0], [1]] * 4000
 test(methods, args)
 
 # LeetCode Submission
-# Error: Time Limit Exceeded with 49002 methods/args at 104th test (OK though when running test alone: 6600 ms)
+# Runtime: 1020 ms, faster than 75.22% of Python3 online submissions for Fancy Sequence.
+# Memory Usage: 54.5 MB, less than 61.77% of Python3 online submissions for Fancy Sequence.
+# 107 / 107 test cases passed.
+
+# Algorithm
+
+#      m, inc
+# a    1,  0
+# +2:  1,  2
+# *3:  3,  6
+#                m, inc
+# b    3,  6     1,  0
+# +4:  3, 10     1,  4
+# *5: 15, 50     5, 20
+
+# Calculation of m and inc for b
+# m   = 15 / 3 = 5
+# inc = 50 - 6 * 15 = 20

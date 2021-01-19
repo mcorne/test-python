@@ -1,9 +1,17 @@
+import os
+import pickle
 from copy import deepcopy
 from typing import List, Tuple
 
 import numpy as np
 from numpy import ndarray
 from scipy.special import softmax
+
+
+def load():
+    with open("mnist.pkl",'rb') as f:
+        mnist = pickle.load(f)
+    return mnist["training_images"], mnist["training_labels"], mnist["test_images"], mnist["test_labels"]
 
 def assert_same_shape(array: ndarray, array_grad: ndarray):
     assert array.shape == array_grad.shape, f"array and grad shapes do not match:  {array.shape} != {array_grad.shape}"
@@ -26,9 +34,9 @@ def to_2d_np(a: ndarray, type: str="col") -> ndarray: # convert 1D Tensor into 2
         return a.reshape(1, -1)
 
 class Operation:
-    def forward(self, input_:ndarray):
+    def forward(self, input_:ndarray, inference: bool=False):
         self.input_ = input_
-        self.output = self._output()
+        self.output = self._output(inference)
         return self.output
 
     def backward(self, output_grad: ndarray) -> ndarray:
@@ -37,7 +45,7 @@ class Operation:
         assert_same_shape(self.input_, self.input_grad)
         return self.input_grad
 
-    def _output(self) -> ndarray:
+    def _output(self, inference: bool) -> ndarray:
         raise NotImplementedError
 
     def _input_grad(self, output_grad: ndarray) -> ndarray:
@@ -60,7 +68,7 @@ class WeightMultiply(ParamOperation):
     def __init__(self, W: ndarray):
         super().__init__(W)
 
-    def _output(self) -> ndarray:
+    def _output(self, inference: bool) -> ndarray:
         return np.dot(self.input_, self.param)
 
     def _input_grad(self, output_grad: ndarray) -> ndarray:
@@ -74,7 +82,7 @@ class BiasAdd(ParamOperation):
         assert B.shape[0] == 1
         super().__init__(B)
 
-    def _output(self) -> ndarray:
+    def _output(self, inference: bool) -> ndarray:
         return self.input_ + self.param
 
     def _input_grad(self, output_grad: ndarray) -> ndarray:
@@ -83,6 +91,22 @@ class BiasAdd(ParamOperation):
     def _param_grad(self, output_grad: ndarray) -> ndarray:
         param_grad = np.ones_like(self.param) * output_grad
         return np.sum(param_grad, axis=0).reshape(1, -1)
+
+class Sigmoid(Operation):
+    def _output(self, inference: bool) -> ndarray:
+        return 1 / (1 + np.exp(-1 * self.input_))
+
+    def _input_grad(self, output_grad: ndarray) -> ndarray:
+        sigmoid_backward = self.output * (1 - self.output)
+        return sigmoid_backward * output_grad
+
+class Tanh(Operation):
+    def _output(self, inference: bool) -> ndarray:
+        return np.tanh(self.input_)
+
+    def _input_grad(self, output_grad: ndarray) -> ndarray:
+        return output_grad * (1 - self.output * self.output)
+
 
 class Layer:
     def __init__(self, neurons: int):
@@ -96,13 +120,13 @@ class Layer:
     def _setup_layer(self, num_in: int):
         raise NotImplementedError
 
-    def forward(self, input_: ndarray) -> ndarray:
+    def forward(self, input_: ndarray, inference=False) -> ndarray:
         if self.first:
             self._setup_layer(input_)
             self.first = False
         self.input_ = input_
         for operation in self.operations:
-            input_ = operation.forward(input_)
+            input_ = operation.forward(input_, inference)
         self.output = input_
         return self.output
 
@@ -154,7 +178,12 @@ class Loss:
         raise NotImplementedError
 
 class MeanSquaredError(Loss):
+    def __init__(self, normalize: bool = False) -> None:
+        self.normalize = normalize
+
     def _output(self) -> float:
+        if self.normalize:
+            self.prediction = self.prediction / self.prediction.sum(axis=1, keepdims=True)
         loss = np.sum(np.power(self.prediction - self.target, 2)) / self.prediction.shape[0]
         return loss
 
@@ -173,32 +202,21 @@ class SoftmaxCrossEntropyLoss(Loss):
 
     def _input_grad(self):
         return self.softmax_preds - self.target
-
-class NeuralNetwork:
-    def __init__(self, layers: List[Layer], loss: Loss, seed: float = 1):
+class LayerBlock:
+    def __init__(self, layers: List[Layer]):
         self.layers = layers
-        self.loss = loss
-        self.seed = seed
-        if seed:
-            for layer in self.layers:
-                layer.seed = self.seed
 
-    def forward(self, x_batch: ndarray) -> ndarray:
-        x_out = x_batch
+    def forward(self, X_batch: ndarray, inference=False) ->  ndarray:
+        X_out = X_batch
         for layer in self.layers:
-            x_out = layer.forward(x_out)
-        return x_out
+            X_out = layer.forward(X_out, inference)
+        return X_out
 
-    def backward(self, loss_grad: ndarray):
+    def backward(self, loss_grad: ndarray) -> ndarray:
         grad = loss_grad
         for layer in reversed(self.layers):
             grad = layer.backward(grad)
-
-    def train_batch(self, x_batch: ndarray, y_batch: ndarray) -> float:
-        predictions = self.forward(x_batch)
-        loss = self.loss.forward(predictions, y_batch)
-        self.backward(self.loss.backward())
-        return loss
+        return grad
 
     def params(self):
         for layer in self.layers:
@@ -207,6 +225,33 @@ class NeuralNetwork:
     def param_grads(self):
         for layer in self.layers:
             yield from layer.param_grads
+
+    def __iter__(self):
+        return iter(self.layers)
+
+    def __repr__(self):
+        layer_strs = [str(layer) for layer in self.layers]
+        return f"{self.__class__.__name__}(\n  " + ",\n  ".join(layer_strs) + ")"
+
+class NeuralNetwork(LayerBlock):
+    def __init__(self, layers: List[Layer], loss: Loss, seed: float = 1):
+        self.layers = layers
+        self.loss = loss
+        self.seed = seed
+        if seed:
+            for layer in self.layers:
+                layer.seed = self.seed
+
+    def forward_loss(self,  X_batch: ndarray,  y_batch: ndarray, inference: bool = False) -> float:
+        prediction = self.forward(X_batch, inference)
+        return self.loss.forward(prediction, y_batch)
+
+    def train_batch(self, X_batch: ndarray, y_batch: ndarray, inference: bool = False) -> float:
+        prediction = self.forward(X_batch, inference)
+        batch_loss = self.loss.forward(prediction, y_batch)
+        loss_grad = self.loss.backward()
+        self.backward(loss_grad)
+        return batch_loss
 
 class Optimizer:
     def __init__(self, lr: float = 0.01):
@@ -234,7 +279,8 @@ class Trainer:
             X_batch, y_batch = X[ii:ii+size], y[ii:ii+size]
             yield X_batch, y_batch
 
-    def fit(self, X_train: ndarray, y_train: ndarray, X_test: ndarray, y_test: ndarray, epochs=50, eval_every=10, batch_size=32, seed=1, restart=True):
+    def fit(self, X_train: ndarray, y_train: ndarray, X_test: ndarray, y_test: ndarray,
+            epochs=50, eval_every=10, batch_size=32, seed=1, restart=True):
         np.random.seed(seed)
         if restart:
             for layer in self.net.layers:

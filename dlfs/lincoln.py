@@ -16,15 +16,19 @@ def load():
 def assert_same_shape(array: ndarray, array_grad: ndarray):
     assert array.shape == array_grad.shape, f"array and grad shapes do not match:  {array.shape} != {array_grad.shape}"
 
-def permute_data(X, y):
-    perm = np.random.permutation(X.shape[0])
-    return X[perm], y[perm]
-
 def mae(y_true: ndarray, y_pred: ndarray): # mean absolute error
     return np.mean(np.abs(y_true - y_pred))
 
+def normalize(a: np.ndarray):
+    other = 1 - a
+    return np.concatenate([a, other], axis=1)
+
 def rmse(y_true: ndarray, y_pred: ndarray): # root mean squared error
     return np.sqrt(np.mean(np.power(y_true - y_pred, 2)))
+
+def permute_data(X, y):
+    perm = np.random.permutation(X.shape[0])
+    return X[perm], y[perm]
 
 def to_2d_np(a: ndarray, type: str="col") -> ndarray: # convert 1D Tensor into 2D
     assert a.ndim == 1, "Input tensors must be 1 dimensional"
@@ -32,6 +36,9 @@ def to_2d_np(a: ndarray, type: str="col") -> ndarray: # convert 1D Tensor into 2
         return a.reshape(-1, 1)
     elif type == "row":
         return a.reshape(1, -1)
+
+def unnormalize(a: np.ndarray):
+    return a[np.newaxis, 0]
 
 class Operation:
     def forward(self, input_:ndarray, inference: bool=False):
@@ -91,6 +98,13 @@ class BiasAdd(ParamOperation):
     def _param_grad(self, output_grad: ndarray) -> ndarray:
         param_grad = np.ones_like(self.param) * output_grad
         return np.sum(param_grad, axis=0).reshape(1, -1)
+
+class Linear(Operation):
+    def _output(self, inference: bool) -> ndarray:
+        return self.input_
+
+    def _input_grad(self, output_grad: ndarray) -> ndarray:
+        return output_grad
 
 class Sigmoid(Operation):
     def _output(self, inference: bool) -> ndarray:
@@ -190,18 +204,26 @@ class MeanSquaredError(Loss):
     def _input_grad(self) -> ndarray:
         return 2 * (self.prediction - self.target) / self.prediction.shape[0]
 
-class SoftmaxCrossEntropyLoss(Loss):
-    def __init__(self, eps: 1e-9):
+class SoftmaxCrossEntropy(Loss):
+    def __init__(self, eps=1e-9):
         self.eps = eps
+        self.single_class = False
 
     def _output(self)-> float:
+        if self.target.shape[1] == 0:
+            self.single_class = True
+        if self.single_class:
+            self.prediction, self.target = normalize(self.prediction), normalize(self.target)
         softmax_preds = softmax(self.prediction, axis=1)
         self.softmax_preds = np.clip(softmax_preds, self.eps, 1 - self.eps)
         softmax_cross_entropy_loss = -self.target * np.log(self.softmax_preds) - (1 - self.target) * np.log(1 - self.softmax_preds)
         return np.sum(softmax_cross_entropy_loss) / self.prediction.shape[0]
 
     def _input_grad(self):
-        return self.softmax_preds - self.target
+        if self.single_class:
+            return unnormalize(self.softmax_preds - self.target)
+        else:
+            return (self.softmax_preds - self.target) / self.prediction.shape[0]
 class LayerBlock:
     def __init__(self, layers: List[Layer]):
         self.layers = layers

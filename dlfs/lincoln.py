@@ -121,6 +121,21 @@ class Tanh(Operation):
     def _input_grad(self, output_grad: ndarray) -> ndarray:
         return output_grad * (1 - self.output * self.output)
 
+class Dropout(Operation):
+    def __init__(self, keep_prob=0.8):
+        super().__init__()
+        self.keep_prob = keep_prob
+
+    def _output(self, inference: bool) -> ndarray:
+        if inference:
+            return self.input_ * self.keep_prob
+        else:
+            self.mask = np.random.binomial(1, self.keep_prob, size=self.input_.shape)
+            return self.input_ * self.mask
+
+    def _input_grad(self, output_grad: ndarray) -> ndarray:
+        return output_grad * self.mask
+
 
 class Layer:
     def __init__(self, neurons: int):
@@ -179,6 +194,8 @@ class Dense(Layer):
         self.params.append(np.random.normal(loc=0, scale=scale, size=(num_in, self.neurons))) # weights
         self.params.append(np.random.normal(loc=0, scale=scale, size=(1, self.neurons))) # bias
         self.operations = [WeightMultiply(self.params[0]), BiasAdd(self.params[1]), self.activation]
+        if self.dropout < 1.0:
+            self.operations.append(Dropout(self.dropout))
 
 class Loss:
     def forward(self, prediction: ndarray, target: ndarray) -> float:

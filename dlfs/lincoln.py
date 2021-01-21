@@ -160,16 +160,24 @@ class Layer:
                 self.param_grads.append(operation.param_grad)
 
 class Dense(Layer):
-    def __init__(self, neurons: int, activation: Operation = Sigmoid()) -> None:
+    def __init__(self, neurons: int, activation: Operation = Sigmoid(), conv_in=False, dropout=1.0, weight_init="standard"):
         super().__init__(neurons)
         self.activation = activation
+        self.conv_in = conv_in
+        self.dropout = dropout
+        self.weight_init = weight_init
 
     def _setup_layer(self, input_: ndarray):
         if self.seed:
             np.random.seed(self.seed)
+        num_in = input_.shape[1]
+        if self.weight_init == "glorot":
+            scale = 2/(num_in + self.neurons)
+        else:
+            scale = 1.0
         self.params = []
-        self.params.append(np.random.randn(input_.shape[1], self.neurons)) # weights
-        self.params.append(np.random.randn(1, self.neurons)) # bias
+        self.params.append(np.random.normal(loc=0, scale=scale, size=(num_in, self.neurons))) # weights
+        self.params.append(np.random.normal(loc=0, scale=scale, size=(1, self.neurons))) # bias
         self.operations = [WeightMultiply(self.params[0]), BiasAdd(self.params[1]), self.activation]
 
 class Loss:

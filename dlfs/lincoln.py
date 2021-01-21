@@ -276,16 +276,51 @@ class NeuralNetwork(LayerBlock):
         return batch_loss
 
 class Optimizer:
-    def __init__(self, lr: float = 0.01):
+    def __init__(self, lr=0.01, final_lr=0, decay_type: str = None):
         self.lr = lr
+        self.final_lr = final_lr
+        self.decay_type = decay_type
+        self.first = True
 
-    def step(self):
-        pass
+    def _setup_decay(self):
+        if self.decay_type == "exponential":
+            self.decay_per_epoch = np.power(self.final_lr / self.lr, 1 / (self.max_epochs - 1))
+        elif self.decay_type == "linear":
+            self.decay_per_epoch = (self.lr - self.final_lr) / (self.max_epochs - 1)
+
+    def _decay_lr(self):
+        if self.decay_type == "exponential":
+            self.lr *= self.decay_per_epoch
+        elif self.decay_type == "linear":
+            self.lr -= self.decay_per_epoch
+
+    def step(self, epoch=0):
+        for param, param_grad in zip(self.net.params(), self.net.param_grads()):
+            self._update_rule(param=param, grad=param_grad)
+
+    def _update_rule(self, **kwargs):
+        raise NotImplementedError
 
 class SGD(Optimizer): # Stochastic gradient descent
+    def _update_rule(self, **kwargs):
+        kwargs["param"] -= self.lr * kwargs["grad"]
+
+class SGDMomentum(Optimizer):
+    def __init__(self, lr=0.01, final_lr=0, decay_type: str = None, momentum=0.9):
+        super().__init__(lr, final_lr, decay_type)
+        self.momentum = momentum
+
     def step(self):
-        for param, param_grad in zip(self.net.params(), self.net.param_grads()):
-            param -= self.lr * param_grad
+        if self.first:
+            self.velocities = [np.zeros_like(param) for param in self.net.params()]
+            self.first = False
+        for param, param_grad, velocity in zip(self.net.params(), self.net.param_grads(), self.velocities):
+            self._update_rule(param=param, grad=param_grad, velocity=velocity)
+
+    def _update_rule(self, **kwargs):
+        kwargs["velocity"] *= self.momentum
+        kwargs["velocity"] += self.lr * kwargs["grad"]
+        kwargs["param"] -= kwargs["velocity"]
 
 class Trainer:
     def __init__(self, net: NeuralNetwork, optim: Optimizer):
@@ -302,7 +337,10 @@ class Trainer:
             yield X_batch, y_batch
 
     def fit(self, X_train: ndarray, y_train: ndarray, X_test: ndarray, y_test: ndarray,
-            epochs=50, eval_every=10, batch_size=32, seed=1, restart=True):
+            epochs=50, eval_every=10, batch_size=32, seed=1,
+            single_output=False, restart=True, early_stopping=True, conv_testing=False):
+        self.optim.max_epochs = epochs
+        self.optim._setup_decay()
         np.random.seed(seed)
         if restart:
             for layer in self.net.layers:

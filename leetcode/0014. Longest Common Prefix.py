@@ -46,3 +46,4 @@ test(strs, expected)
 # LeetCode Submission
 # Runtime: 76 ms, faster than 10.15% of Python3 online submissions for Longest Common Prefix.
 # Memory Usage: 13.9 MB, less than 88.34% of Python3 online submissions for Longest Common Prefix.
+# 124 / 124 test cases passed.

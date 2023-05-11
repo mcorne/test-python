@@ -1,26 +1,46 @@
 # Install miniconda
 # https://docs.conda.io/en/latest/miniconda.html
+
+# Linux
 # Answer yes to all
 Miniconda3-latest-Linux-x86_64.sh
 conda config --set auto_activate_base false
 
+# Windows
+# Answer yes to all
+Miniconda3-latest-Windows-x86_64.exe
+# add to PATH
+C:\Users\michel\miniconda3
+C:\Users\michel\miniconda3\Scripts
+# test installation
+conda list
+# config conda to use activate with powershell
+conda init powershell
+
 # Install datascience packages
 conda activate
 conda install pylint black
+
 # for vscode exercices
 conda install notebook
 conda install matplotlib numpy pandas
 conda install seaborn scikit-learn keras tensorflow
 conda install openpyxl xlrd
+
 # for brian2
 conda install -c conda-forge brian2
 conda install -c brian-team brian2tools # up to 3.6 only
 conda install pytest
+
 # for Neuronal Dynamics Exercises
 conda install numpy scipy jupyter matplotlib mpmath setuptools setuptools_scm mock nose
 pip --version # to verify following pip install is run in conda env
 pip install neurodynex3
 conda install Sphinx
+
+# for py-asciimath
+conda install black pylint
+pip install py-asciimath
 
 # Misc conda
 conda activate

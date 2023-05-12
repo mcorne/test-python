@@ -1,19 +1,14 @@
 from py_asciimath.translator.translator import ASCIIMath2MathML
 
-if __name__ == "__main__":
-    asciimath2mathml = ASCIIMath2MathML(log=False, inplace=True)
-    parsed = asciimath2mathml.translate(
-        r"e^x > 0 forall x in RR",
-        displaystyle=True,
-        dtd="mathml2",
-        dtd_validation=True,
-        from_file=False,
-        output="string",
-        network=True,
-        pprint=False,
-        to_file=None,
-        xml_declaration=False,
-        xml_pprint=False,
-    )
+# python main.py > test.html
 
-    print(parsed)
+asciiml = """
+(del L)/(del a) = -1/m sum_(i=1)^m y_i/a_i - (1 - y_i)/(1 - a_i)
+ = -1/m sum_(i=1)^m (y_i(1 - a_i) - (1 - y_i)a_i)/(a_i(1 - a_i))
+ = -1/m sum_(i=1)^m (y_i - a_i) / (a_i(1 - a_i))
+"""
+mathml = ""
+for line in asciiml.strip().splitlines():
+    mathml += f"<!-- {line} -->\n"
+    mathml += "<div>" + ASCIIMath2MathML().translate(line, displaystyle=True, xml_pprint=False) + "</div>\n"
+print(mathml)

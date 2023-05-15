@@ -3,12 +3,12 @@ from py_asciimath.translator.translator import ASCIIMath2MathML
 # python main.py > test.html
 
 asciiml = """
-(del L)/(del a) = -1/m sum_(i=1)^m y_i/a_i - (1 - y_i)/(1 - a_i)
- = -1/m sum_(i=1)^m (y_i(1 - a_i) - (1 - y_i)a_i)/(a_i(1 - a_i))
- = -1/m sum_(i=1)^m (y_i - a_i) / (a_i(1 - a_i))
+a(z) = 1/(1 + e^(-z))
 """
 mathml = ""
 for line in asciiml.strip().splitlines():
+    if mathml:
+        mathml += "<br>\n"
     mathml += f"<!-- {line} -->\n"
-    mathml += "<div>" + ASCIIMath2MathML().translate(line, displaystyle=True, xml_pprint=False) + "</div>\n"
-print(mathml)
+    mathml += ASCIIMath2MathML().translate(line, displaystyle=True, xml_pprint=False)
+print(mathml.strip())

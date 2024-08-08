@@ -42,6 +42,9 @@ conda install Sphinx
 conda install black pylint
 pip install py-asciimath
 
+# for Phython for Astronomers
+conda install astropy
+
 # Misc conda
 conda activate
 conda deactivate

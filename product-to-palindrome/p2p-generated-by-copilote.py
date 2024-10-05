@@ -1,4 +1,4 @@
-# Generated then optimized by CodeIgniter from the following instructions:
+# Generated then optimized by Copilot from the following instructions:
 # Write a Python program to find the two largest numbers between 1 and 999
 # whose product is a palindrome, and display these numbers, the palindrome,
 # the number of iterations, and the processing time.
